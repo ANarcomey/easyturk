@@ -118,6 +118,62 @@ class EasyTurk(object):
         hit = self.mtc.create_hit(**hit_properties)
         return hit
 
+    def launch_hit_unicode(self, template_location, input_data, reward=0,
+                   frame_height=9000, title=None, description=None,
+                   keywords=None, duration=900, max_assignments=1,
+                   country='US', hits_approved=10000, lifetime=604800,
+                   percent_approved=95):
+        """Launches a HIT.
+
+        Make sure that none of the arguments are None.
+
+        Returns:
+            A hit_id.
+        """
+        if self.sandbox:
+            percent_approved = 0
+            hits_approved = 0
+        hit_properties = {'Title': title,
+                          'Description': description,
+                          'Keywords': keywords,
+                          'MaxAssignments': max_assignments,
+                          'LifetimeInSeconds': lifetime,
+                          'AssignmentDurationInSeconds': duration,
+                          'QualificationRequirements': [
+                              {
+                                  'QualificationTypeId': '00000000000000000040',
+                                  'Comparator': 'GreaterThanOrEqualTo',
+                                  'IntegerValues': [hits_approved]
+                              },
+                              {
+                                  'QualificationTypeId': '00000000000000000071',
+                                  'Comparator': 'EqualTo',
+                                  'LocaleValues': [
+                                       {'Country': country},
+                                  ],
+                              },
+                              {
+                                  'QualificationTypeId': '000000000000000000L0',
+                                  'Comparator': 'GreaterThanOrEqualTo',
+                                  'IntegerValues': [percent_approved],
+                              }
+                          ],
+                          'Reward': str(reward)}
+
+        # Setup HTML Question.
+        env = self.get_jinja_env()
+        template = env.get_template(template_location)
+        #template_params = {'input': json.dumps(input_data)}
+        template_params = input_data
+        html = template.render(template_params)
+        str_html = html.encode('utf-8')
+        html_question = self.create_html_question(str_html, frame_height)
+
+        hit_properties['Question'] = html_question
+
+        hit = self.mtc.create_hit(**hit_properties)
+        return hit
+
     def _parse_response_from_assignment(self, assignment):
         """Parses out the worker's response from the assignment received.
 
@@ -195,7 +251,7 @@ class EasyTurk(object):
                 self.mtc.delete_hit(HITId=hit_id)
                 return True
             except Exception as e:
-                print e
+                print(e)
                 return False
 
     def approve_hit(self, hit_id, reject_on_fail=False,

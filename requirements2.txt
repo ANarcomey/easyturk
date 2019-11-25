@@ -1,0 +1,7 @@
+pathlib
+incremental>=16.10.1
+channels
+
+# for analysis:
+jupyter
+numpy

@@ -4,3 +4,8 @@ rendered_template.html
 easyturk/rendered_template.html
 easyturk/data
 easyturk/scripts
+
+.DS_store
+.ipynb_checkpoints
+results
+junk

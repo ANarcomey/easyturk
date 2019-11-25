@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Guess Which </title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
+  <!--<form role="form" ng-submit="getResults()">-->
+
+  <script type="text/javascript">
+    $.ajax({
+            url:'bluelagoon.stanford.edu:5000/get_guess_which_results/f51bda2a-c721-46e8-a4be-e5160b2e6961',
+            type: 'GET',
+            data_type: "json",
+            success: function(results) {
+                console.log("results:")
+                console.log(results);
+                getAnswer(results);
+            },
+            error: function(error) {
+                console.log("error:")
+                console.log(error)
+            }
+        })
+   
+  </script>
+
+  
+</body>
+</html>
